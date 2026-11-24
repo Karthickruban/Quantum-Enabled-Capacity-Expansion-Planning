@@ -1,15 +1,110 @@
-# Quantum-Inspired Temporal Aggregation for Power System Capacity Expansion
+# ⚡ Quantum-Enabled Capacity Expansion Planning for Resilient Green Grids (Q-CEP)
 
-> A quantum-compatible workflow that selects non-uniformly weighted representative days via QUBO→QAOA and plugs them into a PyPSA-based capacity expansion model.
-## Citation
+<p align="center">
+  <img src="https://img.shields.io/badge/IEEE%20YESIST12-2026%20Finalist-00629B?style=for-the-badge&logo=ieee&logoColor=white" alt="IEEE Finalist" />
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/Quantum-QUBO%20%7C%20QAOA-611f69?style=for-the-badge" alt="Quantum" />
+  <img src="https://img.shields.io/badge/Power%20Systems-PyPSA-orange?style=for-the-badge" alt="PyPSA" />
+  <img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License" />
+</p>
 
-If you use this repository in academic or industrial research, please cite:
+A quantum-classical optimization workflow that selects non-uniformly weighted representative operating days via **QUBO $\rightarrow$ QAOA (Quantum Approximate Optimization Algorithm)** and integrates them into a **PyPSA-based capacity expansion model** to compress temporal dimensionality while preserving investment planning cost fidelity.
 
-**A. Singha, S. Mishra, M. Shafie-khah,  
-_Application of quantum computing to temporal aggregation for efficient capacity expansion in power systems_,  
-International Journal of Electrical Power & Energy Systems, vol. 173, 2025.**  
-https://doi.org/10.1016/j.ijepes.2025.111355
+---
 
+## 🏆 International Recognition & Award
+
+<p align="center">
+  <img src="docs/images/ieee_yesist12_certificate.png" width="85%" alt="IEEE YESIST12 2026 Certificate of Participation" />
+</p>
+
+> **Finalist in the Innovation Challenge Track — IEEE YESIST12 2026 Grand Finale**  
+> *Presented to **Karthick Ruban T** (Amrita Vishwa Vidyapeetham) at the Grand Finale held at BSI Convention Center, Indonesia (October 2nd–3rd, 2026).*
+
+---
+
+## 👥 Authors & Research Group
+
+* **Karthick Ruban T** ([@Karthickruban](https://github.com/Karthickruban)) — **Project Lead & Core Implementation**  
+  *Department of Artificial Intelligence and Data Science, Amrita Vishwa Vidyapeetham, Coimbatore*
+
+---
+
+## 📌 Context & Problem Statement
+
+Modern power system planning requires high-resolution temporal data to capture variability in load and renewable resources (solar, wind, hydro). However, full-year 8,760-hour simulations are computationally prohibitive. 
+
+**Q-CEP (Quantum-Enabled Capacity Expansion Planning)** solves this by:
+1. Posing representative-day selection as a **QUBO (Quadratic Unconstrained Binary Optimization)** problem.
+2. Solving with **QAOA (Quantum Approximate Optimization Algorithm)** to identify the most informative operating conditions.
+3. Applying **non-uniform weights** derived from cluster memberships to preserve renewable curtailment and ramping dynamics.
+4. Feeding the reduced time series into **PyPSA (Linear Optimal Power Flow - LOPF)** for rapid, cost-optimal generation and transmission expansion.
+
+Across standard benchmark networks (**IEEE 9-bus**, **IEEE 30-bus**, and **IEEE 118-bus**), the approach achieves a **>60% reduction in temporal dimensionality** while holding system cost deviations to **$\approx 4.5\%$**.
+
+---
+
+## 📊 Workflow Architecture
+
+<p align="center">
+  <img src="docs/images/program_flow.png" width="90%" alt="Program Workflow" />
+</p>
+
+1. **Preprocess:** Ingest hourly load, wind, and hydro datasets; normalize into diurnal feature profiles.
+2. **Seasonal Windowing & PCA:** Partition seasons into half-month windows to keep each sub-QUBO tractable for current quantum simulators ($\approx 2^{15}\!-\!2^{16}$ Hilbert space).
+3. **QUBO Formulation & QAOA:** Formulate medoid distance minimization as a QUBO and optimize parameters $\gamma, \beta$ using classical optimizers (COBYLA).
+4. **Non-Uniform Weighting:** Scale cluster representatives by assigned day frequencies.
+5. **PyPSA CEP Simulation:** Execute capacity expansion planning with weighted representative snapshots.
+6. **Validation:** Compare against full 8,760-hour baseline dispatches for capital cost fidelity and line congestion.
+
+---
+
+## 🔬 Experiments & Evaluation Presets
+
+The repository includes reproducible experimental configurations:
+
+- **Experiment 1 ($k = 2$):** 12 representative days per season — [`experiment_1.py`](experiment_1.py)
+- **Experiment 2 ($k = 3$):** 18 representative days per season — [`experiment_2.py`](experiment_2.py)
+- **Experiment 3 ($k = 4$):** 24 representative days per season — [`experiment_3.py`](experiment_3.py)
+- **Sensitivity Analysis ($k = 3$):** Evaluates QAOA circuit depth ($p \in \{1, 2, 3\}$), angle initializations, and convergence limits — [`sensitivity_analysis.py`](sensitivity_analysis.py)
+
+---
+
+## ⚡ Quickstart & Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Karthickruban/Quantum-Enabled-Capacity-Expansion-Planning.git
+cd Quantum-Enabled-Capacity-Expansion-Planning
+```
+
+### 2. Environment Setup
+
+```bash
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 3. Run Experiments
+
+```bash
+# Run baseline experiment with k=3 (18 representative days)
+python experiment_2.py
+
+# Run QAOA parameter sensitivity sweep
+python sensitivity_analysis.py
+```
+
+---
+
+## 📚 Academic Reference & Citation
+
+This implementation builds upon research in quantum-assisted power systems modeling:
 
 ```bibtex
 @article{Singha2025_QuantumAggregation,
@@ -19,108 +114,11 @@ https://doi.org/10.1016/j.ijepes.2025.111355
   year    = {2025},
   volume  = {173},
   pages   = {111355},
-  issn    = {0142-0615},
-  doi     = {10.1016/j.ijepes.2025.111355},
-  url     = {https://www.sciencedirect.com/science/article/pii/S0142061525009032},
-  keywords = {Quantum computing, Representative days, Capacity expansion planning, Time aggregation, Renewable energy, Optimization}
+  doi     = {10.1016/j.ijepes.2025.111355}
 }
-
-```
-## Context
-
-Modern power system planning requires high-resolution temporal data to capture variability in load and renewable resources, but full-year hourly simulations are expensive. This repository integrates **QUBO-formulated** representative-day selection solved by **QAOA**, then evaluates investment and operations using **PyPSA (LOPF)**. Across IEEE test systems and seasonal demand types, the approach preserves planning-cost fidelity while drastically shrinking the temporal dimension.
-
-## Features
-
-1. **QUBO→QAOA Representative-Day Selection** — Day selection is posed as a QUBO and optimized with QAOA.
-2. **Non-Uniform Weights** — Each chosen day stands in for multiple real days via cluster-size weights.
-3. **CEP Integration (PyPSA LOPF)** — Weighted representative days drive capacity investment and dispatch.
-4. **Seasonal Windowing** — Half-month windows bound each QUBO to a tractable size for simulators and near-term hardware.
-
-## Experiments & Evaluation
-
-Three presets are provided (per season):
-
-- **Experiment 1** — `k = 2`, **12** representative days/season — [`experiment_1.py`](experiment_1.py)  
-- **Experiment 2** — `k = 3`, **18** representative days/season — [`experiment_2.py`](experiment_2.py)  
-- **Experiment 3** — `k = 4`, **24** representative days/season — [`experiment_3.py`](experiment_3.py)
-
-**Systems & Seasons:** Winter, Spring, Summer, Autumn on **IEEE 9-bus**, **IEEE 30-bus**, and **IEEE 118-bus** networks (MATPOWER canonical cases). Full-resolution vs. aggregated runs are compared for total system cost deviation and dispatch fidelity.
-
-## Sensitivity Analysis
-
-The paper performs a dedicated sensitivity study to test robustness of the QAOA-based selection and the accuracy–compression tradeoff:
-**Sensitivity Analysis** — `k = 3`, [`sensitivity_analysis.py`](sensitivity_analysis.py)  
-
-### A. QAOA Settings (fixed `k = 3`)
-- **Circuit depth (`p`)**: {1, 2, 3}  
-- **Initialization of variational angles (`γ, β`)**: random, warm-start, and zero-init  
-- **Optimizer (COBYLA) iteration limits**: 100, 300, 1000  
-
-**Findings (IEEE-30, Winter):**
-- The **selected representative-day sets are identical** across all tested configurations (pairwise overlap **100%**).  
-- **Cost deviation remains constant at 4.53%** across depths, inits, and iterations, indicating a **stable QAOA landscape** with convergence to a consistent near-global solution.
-
-### B. Number of Representative Days (`k ∈ {2, 3, 4}`)
-- **k = 2** (12 days/season): largest deviations; Spring worst (~8–9%), Summer/Autumn >6% in multiple systems.  
-- **k = 3** (18 days/season): sharp improvement; deviations cluster narrowly around **~4.5–5.1%** across systems and seasons (good balance of fidelity and size).  
-- **k = 4** (24 days/season): **incremental** gains beyond k=3; seasonal peaks reduce modestly (e.g., Autumn ≈4.2%).  
-- Overall: the **biggest step-change is k=2→3**; **diminishing returns** beyond k=3.
-
-### C. Seasonal & System Effects
-- With **k = 3**, deviations are ≈**5%** across **IEEE-9/30/118** and seasons; Spring tends to be lowest (~4.5–4.9%), Winter/Autumn slightly higher (~5.0–5.1%).  
-- Representative days span both **typical clusters and peripheral transitional regimes**, capturing peaks, troughs, and ramps.
-
-
-## Workflow
-
-![Flow Chart](docs/images/program_flow.png "Flow Chart")
-
-1. **Preprocess** hourly load, wind, hydro; construct daily feature vectors.
-2. **Seasonal windowing + PCA** in each half-month segment.
-3. **QUBO formulation** + **QAOA solve** to pick representative days.
-4. **Apply non-uniform weights** from cluster sizes.
-5. **Run PyPSA CEP (LOPF)** with weighted snapshots.
-6. **Compare** against full-resolution baselines (cost, dispatch, runtime).
-
-## Reference Data
-
-- **Load & Wind:** Open Power System Data — Time Series  
-- **Hydro:** Synthetic seasonal profile based on capacity parameters  
-- **Horizon:** **Dec 2018 → Nov 2019**, split by seasons; each season further segmented into **half-month windows** so each QUBO ~**15–16 days** (≈**2^15–2^16** scale) for current simulators.
-
-## Installation
-
-### Prerequisites
-- Python **3.10+**
-- `pip`
-
-### Setup
-
-```bash
-# Clone
-git clone <your-repo-url>.git
-cd <repo-folder>
-
-# Create & activate venv
-python -m venv venv
-# Windows
-venv\Scripts\activate
-# macOS/Linux
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
 ```
 
-## Known Limitations
+---
 
-- Current workflow uses **classical QAOA simulation**; speedups are expected with quantum/hybrid backends.
-- Accuracy–compression tradeoff depends on **k** and seasonal variability; **k = 3** is a strong default, but users should validate for their systems.
-
-## Acknowledgements
-
-- **PyPSA** — https://pypsa.readthedocs.io/
-- **Qiskit** — https://qiskit.org/
-- **Open Power System Data (OPSD)** — https://open-power-system-data.org/
-
+## 📄 License
+This project is open-source and licensed under the [MIT License](LICENSE).
